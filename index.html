@@ -83,5 +83,69 @@
   <script>
     (()=>{const data={rex:{name:'Rex',department:'Amazon Advertising',accountability:'Cross-brand PPC strategy, team performance, launch coordination, and portfolio TACOS oversight.',call:'PPC strategy, launch readiness, TACOS review, or team-level advertising decisions.'},'8 brand desks':{name:'Eight Amazon PPC brand desks',department:'Amazon Advertising',accountability:'Daily campaign execution and optimization for MagnetRX, TheraCopper, RTZN, GrifGrips, Boost Patches, TeraRX, ERND, and Mezcasa.',call:'A campaign, keyword, bid, placement, or daily PPC task for a specific brand.'},cleo:{name:'Cleo',department:'Creative Excellence',accountability:'Conversion-first creative across all brands: listings, A+ content, packaging, storefronts, DTC assets, video, and visual standards.',call:'A creative brief, listing image review, A+ content, packaging, or a launch asset plan.'},lux:{name:'Lux',department:'DTC Creative Production',accountability:'DTC graphic execution: Meta ads, email graphics, website design, social posts, and Higgsfield AI video.',call:'DTC design production, a spec-led asset request, or ClickUp creative queue support.'},nova:{name:'Nova',department:'DTC Growth',accountability:'Shopify performance, TikTok Shop, paid social, Google Ads, creator partnerships, channel coordination, and DTC reporting.',call:'DTC strategy, conversion review, paid social, TikTok Shop, or channel planning.'},klara:{name:'Klara',department:'Email Marketing',accountability:'List growth, Klaviyo flows, campaigns, deliverability, and email revenue across the portfolio.',call:'Email flows, campaigns, list growth, deliverability, or email conversion.'},sage:{name:'Sage',department:'SEO, AEO & GEO Content',accountability:'Search content for Google, AI Overviews, ChatGPT, and Perplexity that remains brand-accurate.',call:'SEO research, content strategy, AEO/GEO, or publish-ready search content.'},iris:{name:'Iris',department:'Organic Social & Creator Outreach',accountability:'Organic TikTok and Instagram planning, trend research, brand-driven posting, and creator outreach.',call:'A social calendar, on-brand posts, trend research, or creator outreach.'},finn:{name:'Finn',department:'Operations & Supply Chain',accountability:'Inventory health, supply chain execution, catalogue integrity, FBA inbound, and fulfillment performance.',call:'Inventory, purchase orders, supplier follow-up, catalogue issues, or inbound planning.'},scout:{name:'Scout',department:'Product Development & Growth',accountability:'Product opportunity validation, sourcing, samples, specifications, differentiation, and launch readiness.',call:'Product opportunities, competitor research, samples, sourcing, or launch coordination.'},vera:{name:'Vera',department:'Customer Experience',accountability:'Amazon and DTC support, review recovery, complaint intelligence, order issues, refunds, and replacements.',call:'Customer complaints, review health, support responses, or recurring issue patterns.'},brix:{name:'Brix',department:'Systems & Knowledge',accountability:'SOPs, playbooks, onboarding documentation, and knowledge capture across departments.',call:'A new or updated SOP, workflow documentation, or process handover.'}},modal=document.querySelector('#agent-modal'),name=document.querySelector('#agent-modal-name'),department=document.querySelector('#agent-modal-department'),accountability=document.querySelector('#agent-modal-accountability'),call=document.querySelector('#agent-modal-call');document.querySelectorAll('.network-node').forEach(node=>{const key=node.firstChild.textContent.trim().toLowerCase(),agent=data[key];if(!agent)return;node.tabIndex=0;node.setAttribute('role','button');node.setAttribute('aria-haspopup','dialog');node.setAttribute('aria-label',`Open details for ${agent.name}`);const open=()=>{name.textContent=agent.name;department.textContent=agent.department;accountability.textContent=agent.accountability;call.textContent=agent.call;modal.showModal()};node.addEventListener('click',open);node.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open()}})});modal.querySelector('.modal-close').addEventListener('click',()=>modal.close());modal.addEventListener('click',event=>{if(event.target===modal)modal.close()})})();
   </script>
+<script>
+(() => {
+  const quinn = {
+    name: 'Quinn',
+    department: 'Operations · reports to Finn',
+    accountability: 'Claim risk and regulatory compliance across customer-facing surfaces, product gating, Amazon enforcement response, and account conduct.',
+    call: 'Before publishing a listing, approving packaging or creative, briefing a creator, greenlighting a SKU, naming a product, or responding to any Amazon notice.'
+  };
+
+  const operations = [...document.querySelectorAll('.network-cluster')].find((cluster) =>
+    cluster.querySelector('.network-department-node')?.textContent.trim() === 'Operations'
+  );
+
+  if (operations && !operations.querySelector('[data-agent="quinn"]')) {
+    const node = document.createElement('div');
+    node.className = 'network-node';
+    node.dataset.agent = 'quinn';
+    node.tabIndex = 0;
+    node.setAttribute('role', 'button');
+    node.setAttribute('aria-haspopup', 'dialog');
+    node.setAttribute('aria-label', 'Open Quinn details');
+    node.innerHTML = 'Quinn<small>Claim risk &amp; compliance</small>';
+    operations.querySelector('.network-nodes')?.append(node);
+
+    const openQuinn = () => {
+      const modal = document.getElementById('agent-modal');
+      if (!modal) return;
+      modal.querySelector('.modal-avatar').textContent = 'Q';
+      modal.querySelector('.modal-name').textContent = quinn.name;
+      modal.querySelector('.modal-department').textContent = quinn.department;
+      modal.querySelector('.modal-accountability').textContent = quinn.accountability;
+      modal.querySelector('.modal-call').textContent = quinn.call;
+      modal.showModal();
+    };
+    node.addEventListener('click', openQuinn);
+    node.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openQuinn();
+      }
+    });
+  }
+
+  const operationsDetail = document.getElementById('dept-operations')?.closest('.department');
+  if (operationsDetail && !operationsDetail.querySelector('[data-agent-card="quinn"]')) {
+    const count = operationsDetail.querySelector('.department-count');
+    if (count) count.textContent = '2 agents';
+    const card = document.createElement('article');
+    card.className = 'agent-card';
+    card.dataset.agentCard = 'quinn';
+    card.innerHTML = `
+      <span class="agent-avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+      <div><h4>Quinn</h4><div class="agent-seat">Claim risk &amp; regulatory compliance</div></div>
+      <p>Owns claim risk across customer-facing surfaces, product gating, Amazon enforcement response, and account conduct.</p>
+      <div class="agent-call"><strong>Call Quinn for:</strong> claim review, packaging, a new SKU, a product name, or any Amazon notice before anyone edits.</div>`;
+    operationsDetail.querySelector('.agent-grid')?.append(card);
+  }
+
+  const note = document.querySelector('.agent-note');
+  if (note) {
+    note.innerHTML = '<strong>20 active workspace agents.</strong> The 12 named character agents are shown individually; eight brand PPC desks are represented together as the Amazon Advertising pod. External HR and finance agents are outside this workspace.';
+  }
+})();
+</script>
 </body>
 </html>
