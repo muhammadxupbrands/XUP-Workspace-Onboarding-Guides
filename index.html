@@ -142,7 +142,70 @@
 
   const note = document.querySelector('.agent-note');
   if (note) {
-    note.innerHTML = '<strong>20 active workspace agents.</strong> The 12 named character agents are shown individually; eight brand PPC desks are represented together as the Amazon Advertising pod. External HR and finance agents are outside this workspace.';
+    note.innerHTML = '<strong>21 workspace agents.</strong> The 13 named character agents are shown individually; eight brand PPC desks are represented together as the Amazon Advertising pod. External HR and finance agents are outside this workspace.';
+  }
+})();
+</script>
+<script>
+(() => {
+  const kino = {
+    name: 'Kino',
+    department: 'DTC Growth · Nova’s specialist',
+    accountability: 'AI content and video direction: scripts, visual direction, content concepts, and ad-creative trend research across all brands.',
+    call: 'When you need an AI video script, a visual direction brief, product content concepts, or grounded creative-trend research.'
+  };
+
+  const dtc = [...document.querySelectorAll('.network-cluster')].find((cluster) =>
+    cluster.querySelector('.network-department-node')?.textContent.trim() === 'DTC Growth'
+  );
+
+  if (dtc && !dtc.querySelector('[data-agent="kino"]')) {
+    const node = document.createElement('div');
+    node.className = 'network-node';
+    node.dataset.agent = 'kino';
+    node.tabIndex = 0;
+    node.setAttribute('role', 'button');
+    node.setAttribute('aria-haspopup', 'dialog');
+    node.setAttribute('aria-label', 'Open Kino details');
+    node.innerHTML = 'Kino<small>AI content &amp; video</small>';
+    dtc.querySelector('.network-nodes')?.append(node);
+
+    const openKino = () => {
+      const modal = document.getElementById('agent-modal');
+      if (!modal) return;
+      modal.querySelector('#agent-modal-name').textContent = kino.name;
+      modal.querySelector('#agent-modal-department').textContent = kino.department;
+      modal.querySelector('#agent-modal-accountability').textContent = kino.accountability;
+      modal.querySelector('#agent-modal-call').textContent = kino.call;
+      modal.showModal();
+    };
+    node.addEventListener('click', openKino);
+    node.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openKino();
+      }
+    });
+  }
+
+  const dtcDetail = document.getElementById('dept-dtc')?.closest('.department');
+  if (dtcDetail && !dtcDetail.querySelector('[data-agent-card="kino"]')) {
+    const count = dtcDetail.querySelector('.department-count');
+    if (count) count.textContent = '5 agents';
+    const card = document.createElement('article');
+    card.className = 'agent-card';
+    card.dataset.agentCard = 'kino';
+    card.innerHTML = `
+      <span class="agent-avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+      <div><h4>Kino</h4><div class="agent-seat">AI content &amp; video direction</div></div>
+      <p>Owns AI video scripts, visual direction, content concepts, and ad-creative trend research across all brands.</p>
+      <div class="agent-call"><strong>Call Kino for:</strong> an AI video script, visual direction, product content concepts, or creative-trend research.</div>`;
+    dtcDetail.querySelector('.agent-grid')?.append(card);
+  }
+
+  const note = document.querySelector('.agent-note');
+  if (note) {
+    note.innerHTML = '<strong>21 workspace agents.</strong> The 13 named character agents are shown individually; eight brand PPC desks are represented together as the Amazon Advertising pod. External HR and finance agents are outside this workspace.';
   }
 })();
 </script>
