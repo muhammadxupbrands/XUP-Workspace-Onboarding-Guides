@@ -110,11 +110,10 @@
     const openQuinn = () => {
       const modal = document.getElementById('agent-modal');
       if (!modal) return;
-      modal.querySelector('.modal-avatar').textContent = 'Q';
-      modal.querySelector('.modal-name').textContent = quinn.name;
-      modal.querySelector('.modal-department').textContent = quinn.department;
-      modal.querySelector('.modal-accountability').textContent = quinn.accountability;
-      modal.querySelector('.modal-call').textContent = quinn.call;
+      modal.querySelector('#agent-modal-name').textContent = quinn.name;
+      modal.querySelector('#agent-modal-department').textContent = quinn.department;
+      modal.querySelector('#agent-modal-accountability').textContent = quinn.accountability;
+      modal.querySelector('#agent-modal-call').textContent = quinn.call;
       modal.showModal();
     };
     node.addEventListener('click', openQuinn);
