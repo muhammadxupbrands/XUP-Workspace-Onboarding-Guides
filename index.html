@@ -513,6 +513,16 @@
     zone.classList.toggle('is-collapsed', !expanded);
     zone.style.height = expanded ? zone.dataset.expandedHeight : '48px';
     zone.querySelectorAll('.network-node').forEach((node) => { node.hidden = !expanded; });
+    if (expanded) {
+      zone.querySelectorAll('.network-node').forEach((node) => {
+        const name = node.firstChild.textContent.trim();
+        const position = agentDefaults[name];
+        if (position) {
+          node.style.left = `${position[0]}px`;
+          node.style.top = `${position[1]}px`;
+        }
+      });
+    }
     const toggle = zone.querySelector('.department-toggle');
     toggle.setAttribute('aria-expanded', String(expanded));
     toggle.textContent = expanded ? '−' : '+';
@@ -544,8 +554,18 @@
       modal.querySelector('#agent-modal-call').textContent = call;
       modal.showModal();
     });
-    toggle.addEventListener('pointerdown', (event) => event.stopPropagation());
-    toggle.addEventListener('click', () => setExpanded(zone, zone.classList.contains('is-collapsed')));
+    const toggleDepartment = () => setExpanded(zone, zone.classList.contains('is-collapsed'));
+    toggle.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleDepartment();
+    });
+    toggle.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleDepartment();
+      }
+    });
     setExpanded(zone, !collapsed[label]);
   });
 
