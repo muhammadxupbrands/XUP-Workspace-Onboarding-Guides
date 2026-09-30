@@ -261,7 +261,7 @@
   hint.textContent = 'Drag any agent node · drag empty space to pan · use the controls or wheel to zoom';
   controls.className = 'canvas-controls';
   controls.innerHTML = '<button class="canvas-control" type="button" data-canvas-action="zoom-out" aria-label="Zoom out">−</button><button class="canvas-control" type="button" data-canvas-action="zoom-in" aria-label="Zoom in">+</button><button class="canvas-control reset" type="button" data-canvas-action="reset">Reset view</button>';
-  toolbar.append(hint, controls);
+  toolbar.append(controls);
 
   const defaultNodes = {
     'Donna': [1364, 80], 'Rex': [118, 440], '8 brand desks': [285, 440], 'Cleo': [598, 440], 'Lux': [768, 440],
@@ -635,7 +635,7 @@
     }
   }, true);
   viewport.addEventListener('wheel', redraw, { capture: true, passive: true });
-  map.querySelector('.network-caption').textContent = 'Drag a department to move its full team. Drag an agent within its department. Curved lines stay connected as the map changes.';
+  map.querySelector('.network-caption')?.remove();
 })();
 </script>
 </body>
