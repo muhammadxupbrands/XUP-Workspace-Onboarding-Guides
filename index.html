@@ -544,6 +544,7 @@
       modal.querySelector('#agent-modal-call').textContent = call;
       modal.showModal();
     });
+    toggle.addEventListener('pointerdown', (event) => event.stopPropagation());
     toggle.addEventListener('click', () => setExpanded(zone, zone.classList.contains('is-collapsed')));
     setExpanded(zone, !collapsed[label]);
   });
