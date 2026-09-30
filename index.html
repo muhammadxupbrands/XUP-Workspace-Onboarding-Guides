@@ -257,7 +257,7 @@
 
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (error) {}
-  const view = saved.view || { x: -260, y: -105, scale: .8 };
+  let view = saved.view || null;
   const positions = saved.positions || {};
   const clampScale = (value) => Math.min(1.35, Math.max(.48, value));
   const applyView = () => { stage.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`; };
@@ -279,7 +279,9 @@
   });
   viewport.append(stage);
   caption.textContent = 'Move nodes to arrange your own map. Your layout stays on this device; Reset view restores the workspace layout.';
+  const defaultView = () => ({ x: Math.max(8, (viewport.clientWidth - 1600 * .65) / 2), y: Math.max(-8, (viewport.clientHeight - 980 * .65) / 2), scale: .65 });
   map.replaceChildren(toolbar, viewport, caption);
+  if (!view) view = defaultView();
   applyView();
 
   const zoomAtCenter = (delta) => {
@@ -299,7 +301,7 @@
     if (action === 'zoom-in') zoomAtCenter(.12);
     if (action === 'zoom-out') zoomAtCenter(-.12);
     if (action === 'reset') {
-      Object.assign(view, { x: -260, y: -105, scale: .8 });
+      Object.assign(view, defaultView());
       nodes.forEach((node) => {
         const key = node.firstChild.textContent.trim();
         positions[key] = [...(defaultNodes[key] || [720, 530])];
