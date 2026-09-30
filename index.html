@@ -219,7 +219,7 @@
   map.dataset.canvasReady = 'true';
   map.classList.add('agent-canvas');
 
-  const storageKey = 'xup-agent-canvas-v2';
+  const storageKey = 'xup-agent-canvas-v3';
   const origin = map.querySelector('.network-origin');
   const caption = map.querySelector('.network-caption');
   let donna = map.querySelector('[data-agent="donna"]');
@@ -429,7 +429,7 @@
   if (!map || !stage || map.dataset.groupCanvasReady) return;
   map.dataset.groupCanvasReady = 'true';
 
-  const key = 'xup-agent-group-canvas-v1';
+  const key = 'xup-agent-group-canvas-v2';
   const hint = map.querySelector('.canvas-hint');
   if (hint) hint.textContent = 'Drag a department to move its team · drag an agent within its team · drag empty space to pan · use the controls or wheel to zoom';
   let saved = {};
