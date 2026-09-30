@@ -531,8 +531,11 @@
     const toggle = document.createElement('button');
     toggle.type = 'button'; toggle.className = 'department-toggle department-control';
     header.append(profile, toggle); zone.prepend(header);
-    header.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
     profile.addEventListener('click', () => {
+      if (zone.dataset.departmentCanvasDragged === 'true') {
+        zone.dataset.departmentCanvasDragged = '';
+        return;
+      }
       const [department, accountability, call] = departmentProfiles[label];
       const modal = document.getElementById('agent-modal');
       modal.querySelector('#agent-modal-name').textContent = label;
@@ -555,20 +558,25 @@
   let departmentDrag = null;
   zones.forEach((zone) => {
     zone.addEventListener('pointerdown', (event) => {
-      if (event.target.closest('.network-node, .department-control')) return;
+      if (event.target.closest('.network-node, .department-toggle')) return;
       event.stopImmediatePropagation();
       const scale = stage.getBoundingClientRect().width / 1800;
-      departmentDrag = { pointerId: event.pointerId, zone, x: event.clientX, y: event.clientY, left: parseFloat(zone.style.left), top: parseFloat(zone.style.top), scale };
+      departmentDrag = { pointerId: event.pointerId, zone, x: event.clientX, y: event.clientY, left: parseFloat(zone.style.left), top: parseFloat(zone.style.top), scale, moved: false };
       zone.setPointerCapture(event.pointerId);
     }, true);
     zone.addEventListener('pointermove', (event) => {
       if (!departmentDrag || event.pointerId !== departmentDrag.pointerId) return;
-      zone.style.left = `${departmentDrag.left + (event.clientX - departmentDrag.x) / departmentDrag.scale}px`;
-      zone.style.top = `${departmentDrag.top + (event.clientY - departmentDrag.y) / departmentDrag.scale}px`;
+      const dx = (event.clientX - departmentDrag.x) / departmentDrag.scale;
+      const dy = (event.clientY - departmentDrag.y) / departmentDrag.scale;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) departmentDrag.moved = true;
+      if (!departmentDrag.moved) return;
+      zone.style.left = `${departmentDrag.left + dx}px`;
+      zone.style.top = `${departmentDrag.top + dy}px`;
       redraw();
     });
     const endDepartmentDrag = (event) => {
       if (!departmentDrag || event.pointerId !== departmentDrag.pointerId) return;
+      if (departmentDrag.moved) zone.dataset.departmentCanvasDragged = 'true';
       departmentDrag = null; save(); redraw();
     };
     zone.addEventListener('pointerup', endDepartmentDrag);
