@@ -430,6 +430,8 @@
   map.dataset.groupCanvasReady = 'true';
 
   const key = 'xup-agent-group-canvas-v1';
+  const hint = map.querySelector('.canvas-hint');
+  if (hint) hint.textContent = 'Drag a department to move its team · drag an agent within its team · drag empty space to pan · use the controls or wheel to zoom';
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(key)) || {}; } catch (error) {}
   const departments = {};
