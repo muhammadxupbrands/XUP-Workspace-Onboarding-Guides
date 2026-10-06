@@ -285,6 +285,20 @@
   const positions = saved.positions || {};
   const clampScale = (value) => Math.min(1.35, Math.max(.25, value));
   const applyView = () => { stage.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`; };
+  map.focusAgent = (agentName) => {
+    const node = [...stage.querySelectorAll('.network-node')].find((item) => item.firstChild.textContent.trim().toLowerCase() === String(agentName).toLowerCase());
+    if (!node) return false;
+    const stageRect = stage.getBoundingClientRect();
+    const nodeRect = node.getBoundingClientRect();
+    const renderedScale = stageRect.width / 2900;
+    const worldX = (nodeRect.left - stageRect.left + nodeRect.width / 2) / renderedScale;
+    const worldY = (nodeRect.top - stageRect.top + nodeRect.height / 2) / renderedScale;
+    view.scale = .78;
+    view.x = viewport.clientWidth / 2 - worldX * view.scale;
+    view.y = viewport.clientHeight / 2 - worldY * view.scale;
+    applyView(); persist();
+    return true;
+  };
   const persist = () => { try { localStorage.setItem(storageKey, JSON.stringify({ view, positions })); } catch (error) {} };
   const setNodePosition = (node, position) => {
     node.style.left = `${position[0]}px`;
@@ -647,6 +661,17 @@
     }
   }, true);
   viewport.addEventListener('wheel', redraw, { capture: true, passive: true });
+  const requestedAgent = new URLSearchParams(location.search).get('agent');
+  if (requestedAgent) {
+    const target = agents.find((node) => node.firstChild.textContent.trim().toLowerCase() === requestedAgent.toLowerCase());
+    if (target) {
+      setExpanded(target.parentElement, true);
+      requestAnimationFrame(() => {
+        map.focusAgent?.(target.firstChild.textContent.trim());
+        target.click();
+      });
+    }
+  }
   map.querySelector('.network-caption')?.remove();
 })();
 </script>
@@ -654,11 +679,11 @@
 (() => {
   const roleKey = 'xup-onboarding-role-v1';
   const profiles = {
-    'customer-service': {agent:'Vera', seat:'Customer Service · All 8 brands', owner:'Melody Deolala', directory:'Customer Experience & Systems', intro:'Here’s what Mel’s first week with Vera looks like.', flow:[['Day 1','Run /onboard-me. Plan for a roughly one-hour interview so Vera learns how you work.'],['Every day after','Open Claude Code → open agents/customer-service → paste customer messages.'],['Review and send','Use Vera’s draft responses, review them for accuracy and tone, then send.']]},
-    creative: {agent:'Cleo', seat:'Creative Excellence', directory:'Creative', intro:'Your first week with Cleo is about turning briefs into clear, on-brand assets.', flow:[['Day 1','Run /onboard-me so Cleo learns your brands, priorities, and review process.'],['Start a task','Open Claude Code and your creative agent folder, then paste the brief or listing goal.'],['Review the draft','Use the output as a starting point, then check the final creative against the brief.']]},
-    marketing: {agent:'Nova', seat:'DTC Growth', directory:'DTC Growth', intro:'Your first week with Nova is about turning channel work into a focused daily rhythm.', flow:[['Day 1','Run /onboard-me so Nova learns your channels, brands, and reporting context.'],['Start a session','Open Claude Code and your agent folder, then share the campaign, channel, or conversion question.'],['Act on the plan','Review the recommendation, use the relevant platform, and bring results back to Nova for the next decision.']]},
-    operations: {agent:'Finn', seat:'Operations & Supply Chain', directory:'Operations', intro:'Your first week with Finn is about getting the right operational context into every decision.', flow:[['Day 1','Run /onboard-me so Finn learns your brands, suppliers, and operating priorities.'],['Start a session','Open Claude Code and your agent folder, then bring the inventory, catalogue, PO, or inbound issue.'],['Review and act','Check the recommended next step, then complete the operational action in the approved system.']]},
-    technical: {agent:'Brix', seat:'Systems & Knowledge', directory:'Customer Experience & Systems', intro:'Your first week with Brix is about documenting work and using the correct technical context.', flow:[['Day 1','Run /onboard-me so Brix learns the systems and documentation you support.'],['Start a session','Open Claude Code and your agent folder, then describe the workflow, handover, or SOP you need.'],['Technical work','Use Git only when your work requires it; routine daily agent work does not require commits.']]},
+    'customer-service': {agent:'Vera', agentKey:'Vera', seat:'Customer Service · All 8 brands', owner:'Melody Deolala', directory:'Customer Experience & Systems', intro:'Here’s what Mel’s first week with Vera looks like.', flow:[['Day 1','Run /onboard-me. Plan for a roughly one-hour interview so Vera learns how you work.'],['Every day after','Open Claude Code → open agents/customer-service → paste customer messages.'],['Review and send','Use Vera’s draft responses, review them for accuracy and tone, then send.']]},
+    creative: {agent:'Cleo', agentKey:'Cleo', seat:'Creative Excellence', directory:'Creative', intro:'Your first week with Cleo is about turning briefs into clear, on-brand assets.', flow:[['Day 1','Run /onboard-me so Cleo learns your brands, priorities, and review process.'],['Start a task','Open Claude Code and your creative agent folder, then paste the brief or listing goal.'],['Review the draft','Use the output as a starting point, then check the final creative against the brief.']]},
+    marketing: {agent:'Nova', agentKey:'Nova', seat:'DTC Growth', directory:'DTC Growth', intro:'Your first week with Nova is about turning channel work into a focused daily rhythm.', flow:[['Day 1','Run /onboard-me so Nova learns your channels, brands, and reporting context.'],['Start a session','Open Claude Code and your agent folder, then share the campaign, channel, or conversion question.'],['Act on the plan','Review the recommendation, use the relevant platform, and bring results back to Nova for the next decision.']]},
+    operations: {agent:'Finn', agentKey:'Finn', seat:'Operations & Supply Chain', directory:'Operations', intro:'Your first week with Finn is about getting the right operational context into every decision.', flow:[['Day 1','Run /onboard-me so Finn learns your brands, suppliers, and operating priorities.'],['Start a session','Open Claude Code and your agent folder, then bring the inventory, catalogue, PO, or inbound issue.'],['Review and act','Check the recommended next step, then complete the operational action in the approved system.']]},
+    technical: {agent:'Brix', agentKey:'Brix', seat:'Systems & Knowledge', directory:'Customer Experience & Systems', intro:'Your first week with Brix is about documenting work and using the correct technical context.', flow:[['Day 1','Run /onboard-me so Brix learns the systems and documentation you support.'],['Start a session','Open Claude Code and your agent folder, then describe the workflow, handover, or SOP you need.'],['Technical work','Use Git only when your work requires it; routine daily agent work does not require commits.']]},
     other: {agent:'Your assigned agent', seat:'Shown in the Agent Directory', directory:'Agent Directory', intro:'Your first week starts with a focused onboarding session and a repeatable daily workflow.', flow:[['Day 1','Run /onboard-me so your agent learns your role and working style.'],['Every day after','Open Claude Code, navigate to your agent folder, and bring one focused work item.'],['Review and act','Use the draft or plan, review it, then complete the work in your normal tools.']]}
   };
   const choiceButtons = [...document.querySelectorAll('.role-choice')];
@@ -670,7 +695,8 @@
     const p = profiles[role] || profiles.other;
     choiceButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.role === role)));
     document.querySelectorAll('[data-role-only]').forEach(item => { item.hidden = item.dataset.roleOnly !== role; });
-    assigned.innerHTML = `<p class="kicker">Your AI partner</p><h2>Your agent: ${p.agent}</h2><p class="agent-seat">${p.seat}</p>${p.owner ? `<p>Owned by: ${p.owner}</p>` : ''}<a class="directory-link" href="?tab=agents">See your agent in the directory</a>`;
+    const directoryUrl = p.agentKey ? `?tab=agents&agent=${encodeURIComponent(p.agentKey)}` : '?tab=agents';
+    assigned.innerHTML = `<p class="kicker">Your AI partner</p><h2>Your agent: ${p.agent}</h2><p class="agent-seat">${p.seat}</p>${p.owner ? `<p>Owned by: ${p.owner}</p>` : ''}<a class="directory-link" href="${directoryUrl}">See your agent in the directory</a>`;
     title.textContent = `Your first week with ${p.agent}`;
     intro.textContent = p.intro;
     flow.innerHTML = p.flow.map(([heading, copy], index) => `<article class="loop-step"><span class="icon-box"><svg class="icon"><use href="#${index === 0 ? 'i-spark' : index === 1 ? 'i-folder' : 'i-save'}"/></svg></span><div><h3>${heading}</h3><p>${copy}</p></div></article>`).join('');
